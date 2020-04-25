@@ -1,0 +1,2 @@
+rootProject.name='Control o2'
+include ':app'

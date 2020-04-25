@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "556931079970",
+    "firebase_url": "https://controloxigeno-3d6fd.firebaseio.com",
+    "project_id": "controloxigeno-3d6fd",
+    "storage_bucket": "controloxigeno-3d6fd.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:556931079970:android:b68d01c80c321774410f7b",
+        "android_client_info": {
+          "package_name": "com.example.controlo2"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "556931079970-0hel8nnpbg6i89mmuamlf6p4kn193m49.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.controlo2",
+            "certificate_hash": "b3c79c23bca258e448c1e236f84e62c3e641b067"
+          }
+        },
+        {
+          "client_id": "556931079970-anpll1ufgjvs9hrc5qfd32qrnk1881bc.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzJw5pZ7sM0uOFA2Jnq0bIxSwR2Mw4M2I"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "556931079970-anpll1ufgjvs9hrc5qfd32qrnk1881bc.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
