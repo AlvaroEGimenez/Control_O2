@@ -1,4 +1,4 @@
-package com.example.controlo2;
+package com.example.controlo2.model;
 
 import java.io.Serializable;
 
@@ -6,6 +6,7 @@ public class Tank implements Serializable {
 
     private int number;
     private int pressure;
+    private boolean onRecharge;
 
     public Tank() {
     }
@@ -29,5 +30,13 @@ public class Tank implements Serializable {
 
     public void setNumber(int number) {
         this.number = number;
+    }
+
+    public boolean isOnRecharge() {
+        return onRecharge;
+    }
+
+    public void setOnRecharge(boolean onRecharge) {
+        this.onRecharge = onRecharge;
     }
 }

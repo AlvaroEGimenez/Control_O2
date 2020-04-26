@@ -12,9 +12,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".ControlTankActivity"></activity>
-        <activity android:name=".TankActivity" />
-        <activity android:name=".MainActivity">
+        <activity android:name=".views.ControlTankActivity"></activity>
+        <activity android:name=".views.TankActivity" />
+        <activity android:name=".views.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -1,4 +1,4 @@
-package com.example.controlo2;
+package com.example.controlo2.views;
 
 import android.annotation.SuppressLint;
 import android.app.Dialog;
@@ -10,6 +10,8 @@ import android.widget.EditText;
 
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatDialogFragment;
+
+import com.example.controlo2.R;
 
 import org.jetbrains.annotations.NotNull;
 
