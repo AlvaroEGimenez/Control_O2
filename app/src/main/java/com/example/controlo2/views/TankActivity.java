@@ -1,4 +1,4 @@
-package com.example.controlo2;
+package com.example.controlo2.views;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,15 +7,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ProgressBar;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.controlo2.R;
+import com.example.controlo2.model.Tank;
+import com.example.controlo2.adapters.TankAdapter;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
@@ -30,7 +31,7 @@ import butterknife.ButterKnife;
 
 import static com.example.controlo2.R.layout.activity_tank;
 
-public class TankActivity extends AppCompatActivity implements TankAdapter.onClickAdparter, AddTankDialog.ExampleDialogListener {
+public class TankActivity extends AppCompatActivity implements TankAdapter.onClickAdparter, AddTankDialog.AddTankDialogListener {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference tanksReference = db.collection("Tanks");
     private TankAdapter tankAdapter;
@@ -116,7 +117,7 @@ public class TankActivity extends AppCompatActivity implements TankAdapter.onCli
     }
 
     @Override
-    public void applyTexts(int tank) {
+    public void addTank(int tank) {
         db.collection("Tanks").whereEqualTo("number", tank)
                 .limit(1).get()
                 .addOnCompleteListener(task -> {

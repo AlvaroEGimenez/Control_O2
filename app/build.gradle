@@ -60,4 +60,7 @@ dependencies {
     implementation 'com.google.firebase:firebase-firestore:21.4.3'
     implementation 'org.jetbrains:annotations:15.0'
 
+    //Lottie
+    implementation 'com.airbnb.android:lottie:3.4.0'
+
 }
