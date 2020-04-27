@@ -8,4 +8,7 @@
     <string name="control_de_oxigeno">Control de Oxigeno</string>
     <string name="ingresar_cilindro">Ingresar cilindro</string>
     <string name="error_ingresar_valor">Se debe ingresar un valor</string>
+    <string name="enviar">Enviar</string>
+    <string name="cancelar">Cancelar</string>
+
 </resources>

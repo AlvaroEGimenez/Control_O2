@@ -7,9 +7,11 @@ import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -36,6 +38,7 @@ public class ControlTankActivity extends AppCompatActivity implements UpdatePsiD
     public static final String TAG = "controlActivity";
 
 
+
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private Long level;
     private Map<String, Object> recharge = new HashMap<>();
@@ -50,6 +53,8 @@ public class ControlTankActivity extends AppCompatActivity implements UpdatePsiD
     WaveLoadingView waveLoadingView;
     @BindView(R.id.floatingActionButton)
     FloatingActionButton floatingActionButton;
+    @BindView(R.id.progressBarControl)
+    ProgressBar progressBarControl;
 
 
     @Override
@@ -62,7 +67,6 @@ public class ControlTankActivity extends AppCompatActivity implements UpdatePsiD
         Objects.requireNonNull(getSupportActionBar()).setTitle("Cilindro numero " + nTank);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         toolbar.showOverflowMenu();
-
 
 
         floatingActionButton.setOnClickListener(v -> {
@@ -79,7 +83,20 @@ public class ControlTankActivity extends AppCompatActivity implements UpdatePsiD
         });
 
         getLevel();
+        checkColection();
 
+    }
+
+    private void checkColection() {
+        db.collection("Tanks").get().addOnCompleteListener(task -> {
+            if (task.isSuccessful() && task.getResult().isEmpty()) {
+                waveLoadingView.setVisibility(View.INVISIBLE);
+                progressBarControl.setVisibility(View.INVISIBLE);
+            } else {
+                progressBarControl.setVisibility(View.GONE);
+                waveLoadingView.setVisibility(View.VISIBLE);
+            }
+        });
     }
 
     private void openDialog() {
@@ -111,7 +128,7 @@ public class ControlTankActivity extends AppCompatActivity implements UpdatePsiD
                 openDialog();
                 break;
             case R.id.send_to_provider:
-                sendToProvider();
+                confirmAction();
                 break;
             case android.R.id.home:
                 onBackPressed();
@@ -120,11 +137,35 @@ public class ControlTankActivity extends AppCompatActivity implements UpdatePsiD
         return true;
     }
 
+    private void confirmAction() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        String positiveButton;
+
+        if (tankValues.isOnRecharge())
+            positiveButton = getString(R.string.ingresar);
+        else
+            positiveButton = getString(R.string.enviar);
+
+// Add the buttons
+        builder.setTitle("Confirmar")
+        .setMessage("Cilindro numero "+ nTank);
+
+        builder.setPositiveButton(positiveButton, (dialog, id) -> {
+            // User clicked OK button
+            sendToProvider();
+        });
+        builder.setNegativeButton(R.string.cancelar, (dialog, id) -> {
+            // User cancelled the dialog
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
+    }
+
 
     private void sendToProvider() {
         if (tankValues.isOnRecharge()) {
             recharge.put("onRecharge", false);
-            recharge.put("pressure", 200);
 
         } else {
             recharge.put("onRecharge", true);
