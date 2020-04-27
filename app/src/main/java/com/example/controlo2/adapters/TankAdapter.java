@@ -1,7 +1,6 @@
 package com.example.controlo2.adapters;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +47,7 @@ public  class TankAdapter extends FirestoreRecyclerAdapter<Tank, TankAdapter.Tan
         }
 
         tankHolder.itemView.setOnLongClickListener(v -> {
-            clickAdparter.deleteTank(i);
+            clickAdparter.deleteTank(recharge, i);
             return true;
         });
     }
@@ -87,7 +86,7 @@ public  class TankAdapter extends FirestoreRecyclerAdapter<Tank, TankAdapter.Tan
 
     public interface onClickAdparter{
         void clickTank(Tank tank);
-        void deleteTank(int position);
+        void deleteTank(Tank tankDelete, int position);
     }
 
 }

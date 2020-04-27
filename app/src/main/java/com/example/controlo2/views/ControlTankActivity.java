@@ -17,13 +17,16 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.controlo2.R;
+import com.example.controlo2.model.ProviderCylinder;
 import com.example.controlo2.model.Tank;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -35,6 +38,7 @@ import static com.google.android.material.snackbar.Snackbar.LENGTH_SHORT;
 
 public class ControlTankActivity extends AppCompatActivity implements UpdatePsiDialog.UpdatePsiDialogListener {
     public static final String KEY_N_TANK = "numero_tanque";
+    public static final String KEY_PROVIDERS = "providers";
     public static final String TAG = "controlActivity";
 
 
@@ -44,6 +48,8 @@ public class ControlTankActivity extends AppCompatActivity implements UpdatePsiD
     private Map<String, Object> recharge = new HashMap<>();
     private int nTank;
     private Tank tankValues = new Tank();
+    private List<ProviderCylinder> providerCylinderList = new ArrayList<>();
+    private ArrayList<String>  mailList = new ArrayList<>();
 
     @BindView(R.id.constraintlayoutControl)
     ConstraintLayout constraintlayoutControl;
@@ -62,7 +68,18 @@ public class ControlTankActivity extends AppCompatActivity implements UpdatePsiD
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_control_tank);
         ButterKnife.bind(this);
-        nTank = Objects.requireNonNull(getIntent().getExtras()).getInt(KEY_N_TANK);
+        if (getIntent().getExtras() != null){
+            nTank = Objects.requireNonNull(getIntent().getExtras()).getInt(KEY_N_TANK);
+            providerCylinderList = (List<ProviderCylinder>) getIntent().getExtras().getSerializable(KEY_PROVIDERS);
+        }
+        if (providerCylinderList != null){
+            for (ProviderCylinder providerCylinder : providerCylinderList) {
+                String mail = providerCylinder.getMail();
+                mailList.add(mail);
+            }
+        }
+
+        String mails = mailList.toString().replaceAll("[\\[\\]]", "");
         setSupportActionBar(toolbar);
         Objects.requireNonNull(getSupportActionBar()).setTitle("Cilindro numero " + nTank);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -72,9 +89,9 @@ public class ControlTankActivity extends AppCompatActivity implements UpdatePsiD
         floatingActionButton.setOnClickListener(v -> {
             Intent i = new Intent(Intent.ACTION_SEND);
             i.setType("message/rfc822");
-            i.putExtra(Intent.EXTRA_EMAIL, new String[]{"emaildelproveedor@proveedor.com"});
+            i.putExtra(Intent.EXTRA_EMAIL, new String[]{mails});
             i.putExtra(Intent.EXTRA_SUBJECT, "Recarga Tanque " + nTank);
-            i.putExtra(Intent.EXTRA_TEXT, "El tanque " + nTank + " se encuetra en un nivel bajo se require la recarga, presion actual " + tankValues.getPressure());
+            i.putExtra(Intent.EXTRA_TEXT, "El cilinro " + nTank + " se encuetra en un nivel bajo se require la recarga, presion actual " + tankValues.getPressure());
             try {
                 startActivity(Intent.createChooser(i, "Send mail..."));
             } catch (ActivityNotFoundException ex) {

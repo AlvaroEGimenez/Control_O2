@@ -1,14 +1,19 @@
 <resources>
-    <string name="app_name">Control o2</string>
-    <string name="numero_de_tanque">Numero de cilindro</string>
+    <string name="app_name">Control Oxígeno</string>
+    <string name="numero_de_tanque">Número de cilindro</string>
     <string name="psi">PSI</string>
     <string name="enviar_recarga">Enviar a recarga</string>
     <string name="ingresar">ingresar</string>
     <string name="actualizar">actualizar</string>
-    <string name="control_de_oxigeno">Control de Oxigeno</string>
+    <string name="control_de_oxigeno">Control de Oxígeno</string>
     <string name="ingresar_cilindro">Ingresar cilindro</string>
     <string name="error_ingresar_valor">Se debe ingresar un valor</string>
     <string name="enviar">Enviar</string>
     <string name="cancelar">Cancelar</string>
+    <string name="borrar">Borrar</string>
+    <string name="cilindro">Cilindro</string>
+    <string name="psi_actual">Psi Actual</string>
+    <string name="ingresar_mail_proveedor">ingresar mail proveedor</string>
+    <string name="email">Dirección de mail</string>
 
 </resources>

@@ -1,15 +1,14 @@
 package com.example.controlo2.views;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
-
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.controlo2.R;
@@ -47,7 +46,7 @@ public class SplashActivity extends AppCompatActivity {
             lottieAnimationViewInternet.setVisibility(View.INVISIBLE);
             lottieAnimationView.setAnimation("hospital.json");
             lottieAnimationView.playAnimation();
-            Intent intent = new Intent(this,MainActivity.class);
+            Intent intent = new Intent(this,TankActivity.class);
             Handler handler = new Handler();
             handler.postDelayed(() -> startActivity(intent),3000);
         } else {

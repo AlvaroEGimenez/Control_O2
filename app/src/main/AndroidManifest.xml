@@ -14,9 +14,6 @@
         android:theme="@style/AppTheme"
         tools:ignore="LockedOrientationActivity">
 
-        <activity android:name=".views.MainActivity"
-            android:screenOrientation="portrait"/>
-
         <activity android:name=".views.ControlTankActivity"
             android:screenOrientation="portrait"/>
 
