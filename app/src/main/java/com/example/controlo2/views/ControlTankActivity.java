@@ -3,6 +3,7 @@ package com.example.controlo2.views;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.InputFilter;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +15,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 
 import com.example.controlo2.R;
 import com.example.controlo2.model.Tank;
+import com.example.controlo2.utils.InputFilterMinMax;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -63,7 +65,7 @@ public class ControlTankActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
 
-
+        editText.setFilters(new InputFilter[]{ new InputFilterMinMax("1", "200")});
 
         nTank = Objects.requireNonNull(getIntent().getExtras()).getInt(KEY_N_TANK);
         button2.setOnClickListener(view -> {
@@ -93,10 +95,14 @@ public class ControlTankActivity extends AppCompatActivity {
         });
 
         buttonToRecharge.setOnClickListener(v -> {
-            if (tankValues.isOnRecharge())
-                recharge.put("onRecharge",false);
+            if (tankValues.isOnRecharge()) {
+                recharge.put("onRecharge", false);
+                recharge.put("pressure", 100);
+                buttonToRecharge.setText("Enviar a recarga");
+            }
             else {
                 recharge.put("onRecharge", true);
+                recharge.put("pressure", 0);
                 buttonToRecharge.setText("ingresar");
             }
             db.collection("Tanks").document(String.valueOf(nTank)).update(recharge)
@@ -135,7 +141,8 @@ public class ControlTankActivity extends AppCompatActivity {
         DocumentReference docRef = db.collection("Tanks").document(String.valueOf(nTank));
         docRef.get().addOnSuccessListener(documentSnapshot -> {
             tankValues = documentSnapshot.toObject(Tank.class);
-            waveLoadingView.setProgressValue(tankValues.getPressure());
+            int pressure =  tankValues.getPressure();
+            waveLoadingView.setProgressValue(pressure / 2);
             textView3.setText(String.valueOf(tankValues.getPressure()));
             startEvent(tankValues.getPressure());
             checkStock(tankValues.isOnRecharge());

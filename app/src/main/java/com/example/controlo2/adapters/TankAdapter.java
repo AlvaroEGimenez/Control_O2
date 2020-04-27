@@ -35,13 +35,16 @@ public  class TankAdapter extends FirestoreRecyclerAdapter<Tank, TankAdapter.Tan
     protected void onBindViewHolder(@NonNull TankHolder tankHolder, int i, @NonNull Tank recharge) {
         tankHolder.textview_number.setText(String.valueOf(recharge.getNumber()));
         tankHolder.itemView.setOnClickListener(v -> clickAdparter.clickTank(recharge));
+
         if (recharge.isOnRecharge()) {
             tankHolder.textViewInStock.setText("EN RECARGA");
             tankHolder.textViewInStock.setTextColor(ContextCompat.getColor(context,R.color.colorRed));
+            tankHolder.textViewPsi.setText(" - ");
         }
             else {
             tankHolder.textViewInStock.setText("DISPONIBLE");
             tankHolder.textViewInStock.setTextColor(ContextCompat.getColor(context, R.color.colorBlack));
+            tankHolder.textViewPsi.setText(String.valueOf(recharge.getPressure()));
         }
 
         tankHolder.itemView.setOnLongClickListener(v -> {
@@ -70,6 +73,8 @@ public  class TankAdapter extends FirestoreRecyclerAdapter<Tank, TankAdapter.Tan
     class TankHolder extends RecyclerView.ViewHolder {
         @BindView(R.id.tank_number)
         TextView textview_number;
+        @BindView(R.id.textView_psi)
+        TextView textViewPsi;
         @BindView(R.id.textView_inStock)
         TextView textViewInStock;
 

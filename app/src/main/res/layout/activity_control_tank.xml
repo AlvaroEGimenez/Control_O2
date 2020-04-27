@@ -19,7 +19,7 @@
         app:layout_constraintEnd_toStartOf="@+id/guideline3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:wlv_borderColor="@color/colorAccent"
+        app:wlv_borderColor="@color/colorPrimaryDark"
         app:wlv_round_rectangle="true"
         app:wlv_shapeType="rectangle"
         app:wlv_titleBottomColor="@android:color/holo_red_dark"
@@ -28,7 +28,7 @@
         app:wlv_titleCenterSize="24sp"
         app:wlv_triangle_direction="north"
         app:wlv_waveAmplitude="5"
-        app:wlv_waveColor="@color/colorAccent"
+        app:wlv_waveColor="@color/colorPrimaryDark"
         app:wlv_wave_background_Color="#C5C1C1" />
 
     <androidx.constraintlayout.widget.Guideline
@@ -50,7 +50,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="Presion "
+        android:text=" Psi"
         android:textSize="33sp"
         app:layout_constraintBottom_toTopOf="@+id/textView3"
         app:layout_constraintEnd_toEndOf="parent"
