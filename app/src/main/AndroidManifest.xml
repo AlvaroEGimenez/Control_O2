@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.controlo2">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
-
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -11,10 +11,21 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".views.ControlTankActivity"></activity>
-        <activity android:name=".views.TankActivity" />
-        <activity android:name=".views.MainActivity">
+        android:theme="@style/AppTheme"
+        tools:ignore="LockedOrientationActivity">
+
+        <activity android:name=".views.MainActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".views.ControlTankActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".views.TankActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".views.SplashActivity"
+            android:theme="@style/noActionBar"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

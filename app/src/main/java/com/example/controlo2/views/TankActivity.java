@@ -31,7 +31,7 @@ import butterknife.ButterKnife;
 
 import static com.example.controlo2.R.layout.activity_tank;
 
-public class TankActivity extends AppCompatActivity implements TankAdapter.onClickAdparter, AddTankDialog.ExampleDialogListener {
+public class TankActivity extends AppCompatActivity implements TankAdapter.onClickAdparter, AddTankDialog.AddTankDialogListener {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
     private CollectionReference tanksReference = db.collection("Tanks");
     private TankAdapter tankAdapter;
@@ -117,7 +117,7 @@ public class TankActivity extends AppCompatActivity implements TankAdapter.onCli
     }
 
     @Override
-    public void applyTexts(int tank) {
+    public void addTank(int tank) {
         db.collection("Tanks").whereEqualTo("number", tank)
                 .limit(1).get()
                 .addOnCompleteListener(task -> {
