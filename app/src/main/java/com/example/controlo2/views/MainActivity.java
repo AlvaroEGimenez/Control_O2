@@ -1,5 +1,6 @@
 package com.example.controlo2.views;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
@@ -27,5 +28,18 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(this, TankActivity.class);
             startActivity(intent);
         });
+    }
+
+
+    @Override
+    public void onBackPressed() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("Cerrar la aplicacion?")
+                .setCancelable(false)
+                .setPositiveButton("Si", (dialog, id) -> MainActivity.this.finish())
+                .setNegativeButton("No", (dialog, id) -> dialog.cancel());
+        AlertDialog alert = builder.create();
+        alert.show();
+
     }
 }
