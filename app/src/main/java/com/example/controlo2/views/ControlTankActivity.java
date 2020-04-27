@@ -14,7 +14,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 
 import com.example.controlo2.R;
 import com.example.controlo2.model.ProviderCylinder;
@@ -51,8 +51,8 @@ public class ControlTankActivity extends AppCompatActivity implements UpdatePsiD
     private List<ProviderCylinder> providerCylinderList = new ArrayList<>();
     private ArrayList<String>  mailList = new ArrayList<>();
 
-    @BindView(R.id.constraintlayoutControl)
-    ConstraintLayout constraintlayoutControl;
+    @BindView(R.id.coordinatorlayoutControl)
+    CoordinatorLayout coordinatorLayout;
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.waveLoadingView)
@@ -192,15 +192,15 @@ public class ControlTankActivity extends AppCompatActivity implements UpdatePsiD
                 .addOnCompleteListener(task ->
                 {
                     if (task.isSuccessful()) {
-                        Snackbar.make(constraintlayoutControl, "Valores actualizados", LENGTH_SHORT).show();
+                        Snackbar.make(coordinatorLayout, "Valores actualizados", LENGTH_SHORT).show();
                     }
                     getLevel();
 
-                }).addOnFailureListener(e -> Snackbar.make(constraintlayoutControl, "Ocurrio un error intente nuevamente", LENGTH_SHORT).show());
+                }).addOnFailureListener(e -> Snackbar.make(coordinatorLayout, "Ocurrio un error intente nuevamente", LENGTH_SHORT).show());
     }
 
     private void setLevels() {
-        final Snackbar snackbar = Snackbar.make(constraintlayoutControl, "Guardando...", LENGTH_SHORT);
+        final Snackbar snackbar = Snackbar.make(coordinatorLayout, "Guardando...", LENGTH_SHORT);
         snackbar.show();
 
         db.collection("Tanks").document(String.valueOf(nTank)).update(recharge)
@@ -208,10 +208,10 @@ public class ControlTankActivity extends AppCompatActivity implements UpdatePsiD
                 {
                     if (task.isSuccessful()) {
                         snackbar.dismiss();
-                        Snackbar.make(constraintlayoutControl, "Valores actualizados", LENGTH_SHORT).show();
+                        Snackbar.make(coordinatorLayout, "Valores actualizados", LENGTH_SHORT).show();
                         getLevel();
                     }
-                }).addOnFailureListener(e -> Snackbar.make(constraintlayoutControl, "Ocurrio un error intente nuevamente", LENGTH_SHORT).show());
+                }).addOnFailureListener(e -> Snackbar.make(coordinatorLayout, "Ocurrio un error intente nuevamente", LENGTH_SHORT).show());
 
     }
 

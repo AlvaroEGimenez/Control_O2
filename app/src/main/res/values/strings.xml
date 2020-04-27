@@ -15,5 +15,6 @@
     <string name="psi_actual">Psi Actual</string>
     <string name="ingresar_mail_proveedor">ingresar mail proveedor</string>
     <string name="email">Dirección de mail</string>
+    <string name="sin_registros">Sin registros</string>
 
 </resources>

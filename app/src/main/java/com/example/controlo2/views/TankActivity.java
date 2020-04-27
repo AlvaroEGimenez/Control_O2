@@ -1,5 +1,6 @@
 package com.example.controlo2.views;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -8,16 +9,19 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.airbnb.lottie.LottieAnimationView;
 import com.example.controlo2.R;
 import com.example.controlo2.adapters.TankAdapter;
 import com.example.controlo2.model.ProviderCylinder;
@@ -50,8 +54,12 @@ public class TankActivity extends AppCompatActivity implements TankAdapter.onCli
     private TankAdapter tankAdapter;
     private List<ProviderCylinder> providerCylinderList = new ArrayList<>();
 
-    @BindView(R.id.constraintlayout)
-    ConstraintLayout constraintLayout;
+    @BindView(R.id.coordinatorlayout)
+    CoordinatorLayout coordinator;
+    @BindView(R.id.constraint_empty)
+    ConstraintLayout constraintLayout_empty;
+    @BindView(R.id.constraint_ok)
+    ConstraintLayout constraintLayout_ok;
     @BindView(R.id.toolbarTank)
     Toolbar toolbar;
     @BindView(R.id.recyclerview_tanks)
@@ -60,6 +68,10 @@ public class TankActivity extends AppCompatActivity implements TankAdapter.onCli
     ProgressBar progressBar;
     @BindView(R.id.fab)
     FloatingActionButton floatingActionButton;
+    @BindView(R.id.lotte_empy_state)
+    LottieAnimationView lottieAnimationView;
+    @BindView(R.id.textView_empty_state)
+    TextView textViewEmpty_state;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,14 +117,23 @@ public class TankActivity extends AppCompatActivity implements TankAdapter.onCli
     }
 
 
+    @SuppressLint("RestrictedApi")
     private void checkCollection() {
         db.collection("Tanks").get().addOnCompleteListener(task -> {
+            floatingActionButton.setVisibility(View.VISIBLE);
             if (task.isSuccessful() && task.getResult().isEmpty()) {
-                recyclerView.setVisibility(View.INVISIBLE);
+                constraintLayout_empty.setVisibility(View.VISIBLE);
+                lottieAnimationView.setAnimation("empty-state.json");
+                lottieAnimationView.playAnimation();
+                textViewEmpty_state.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.INVISIBLE);
+                constraintLayout_ok.setVisibility(View.GONE);
             } else {
                 progressBar.setVisibility(View.GONE);
-                recyclerView.setVisibility(View.VISIBLE);
+                constraintLayout_ok.setVisibility(View.VISIBLE);
+                constraintLayout_empty.setVisibility(View.GONE);
+                lottieAnimationView.pauseAnimation();
+                textViewEmpty_state.setVisibility(View.INVISIBLE);
             }
         });
     }
@@ -132,7 +153,10 @@ public class TankActivity extends AppCompatActivity implements TankAdapter.onCli
         AlertDialog.Builder alertDialogDelete = new AlertDialog.Builder(this);
         alertDialogDelete.setTitle("Borrar Cilindro")
                 .setMessage("Desea eliminar el cilindro " + tankNumber.getNumber())
-                .setPositiveButton(R.string.borrar, (dialog, which) -> tankAdapter.borrarItem(position))
+                .setPositiveButton(R.string.borrar, (dialog, which) -> {
+                    tankAdapter.borrarItem(position);
+                    checkCollection();
+                })
                 .setNegativeButton(R.string.cancelar, (dialog, which) -> {
 
                 });
@@ -176,40 +200,30 @@ public class TankActivity extends AppCompatActivity implements TankAdapter.onCli
                     if (task.isSuccessful()) {
                         boolean isEmpty = Objects.requireNonNull(task.getResult()).isEmpty();
                         if (!isEmpty) {
-                            Snackbar.make(constraintLayout, "El  tanque ya existe", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(coordinator, "El  tanque ya existe", Snackbar.LENGTH_SHORT).show();
                         } else {
                             db.collection("Tanks").document(String.valueOf(tank))
                                     .set(new Tank(Integer.parseInt(String.valueOf(tank)), 0))
                                     .addOnSuccessListener(new OnSuccessListener<Void>() {
                                         @Override
                                         public void onSuccess(Void aVoid) {
-                                            Snackbar.make(constraintLayout, "Tanque agregado", Snackbar.LENGTH_SHORT).show();
-                                            Handler handler = new Handler();
-                                            handler.postDelayed(this::checkCollection, 1000);
+                                            Snackbar.make(coordinator, "Tanque agregado", Snackbar.LENGTH_SHORT).show();
+                                            updateConstraints();
                                             Log.d("TAG", "DocumentSnapshot successfully written!");
-                                        }
-
-                                        private void checkCollection() {
-                                            db.collection("Tanks").get().addOnCompleteListener(task -> {
-                                                if (task.isSuccessful() && task.getResult().isEmpty()) {
-                                                    recyclerView.setVisibility(View.INVISIBLE);
-                                                    progressBar.setVisibility(View.INVISIBLE);
-                                                } else {
-                                                    progressBar.setVisibility(View.GONE);
-                                                    recyclerView.setVisibility(View.VISIBLE);
-                                                }
-                                            });
                                         }
                                     })
                                     .addOnFailureListener(e -> {
                                         Log.w("TAG", "Error writing document", e);
-                                        Snackbar.make(constraintLayout, "Error intente nuevamente", Snackbar.LENGTH_SHORT).show();
-
+                                        Snackbar.make(coordinator, "Error intente nuevamente", Snackbar.LENGTH_SHORT).show();
                                     });
-
                         }
                     }
                 });
+    }
+
+    private void updateConstraints() {
+        Handler handler = new Handler();
+        handler.postDelayed(this::checkCollection, 1000);
     }
 
     @Override
@@ -230,11 +244,11 @@ public class TankActivity extends AppCompatActivity implements TankAdapter.onCli
         db.collection("Provider").whereEqualTo("mail",mail).limit(1).get().addOnCompleteListener(task -> {
             boolean isEmpty = Objects.requireNonNull(task.getResult()).isEmpty();
             if (!isEmpty){
-                Snackbar.make(constraintLayout, "La direccion de mail ya existe", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(coordinator, "La direccion de mail ya existe", Snackbar.LENGTH_SHORT).show();
             }
             else {
                 db.collection("Provider").add(new ProviderCylinder(mail, name)).addOnSuccessListener(documentReference ->
-                        Snackbar.make(constraintLayout,"direccion de email agregado",Snackbar.LENGTH_SHORT).show());
+                        Snackbar.make(coordinator,"direccion de email agregado",Snackbar.LENGTH_SHORT).show());
                 getMails();
             }
         });
