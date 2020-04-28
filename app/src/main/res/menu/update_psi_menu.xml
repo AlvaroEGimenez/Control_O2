@@ -14,4 +14,9 @@
         android:visible="true">
     </item>
 
+    <item android:id="@+id/action_add_observ"
+        android:title="@string/editar_observaciones"
+        app:showAsAction="never">
+    </item>
+
 </menu>

@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Control Oxígeno</string>
-    <string name="numero_de_tanque">Número de cilindro</string>
+    <string name="numero_de_tanque">Código</string>
     <string name="psi">PSI</string>
     <string name="enviar_recarga">Enviar a recarga</string>
     <string name="ingresar">ingresar</string>
@@ -16,5 +16,24 @@
     <string name="ingresar_mail_proveedor">ingresar mail proveedor</string>
     <string name="email">Dirección de mail</string>
     <string name="sin_registros">Sin registros</string>
+    <string name="capitacidad">Capitacidad</string>
+    <string name="fecha_vencimiento">Fecha vencimiento</string>
+    <string name="propietario">Propietario</string>
+    <string name="proveedor">Proveedor</string>
+    <string name="cilindro_existe">El  cilindro ya existe</string>
+    <string name="tanque_agregado">Tanque agregado</string>
+    <string name="error_intente_nuevamente">Error intente nuevamente</string>
+    <string name="borrar_cilindro">Borrar Cilindro</string>
+    <string name="mail_existe">La direccion de mail ya existe</string>
+    <string name="email_agregado">direccion de email agregado</string>
+    <string name="cerrar_app">¿Cerrar la aplicacion?</string>
+    <string name="si">Si</string>
+    <string name="no">No</string>
+    <string name="guardando">Guardando...</string>
+    <string name="ocurrio_error">Ocurrio un error intente nuevamente</string>
+    <string name="valores_actualizados">Valores actualizados</string>
+    <string name="observaciones">Observaciones</string>
+    <string name="sin_observaciones">Sin observaciones</string>
+    <string name="editar_observaciones">Editar observaciones</string>
 
 </resources>

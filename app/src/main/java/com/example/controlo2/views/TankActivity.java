@@ -24,19 +24,16 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.airbnb.lottie.LottieAnimationView;
 import com.example.controlo2.R;
 import com.example.controlo2.adapters.TankAdapter;
+import com.example.controlo2.model.Constants;
 import com.example.controlo2.model.ProviderCylinder;
 import com.example.controlo2.model.Tank;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.Query;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -50,7 +47,7 @@ import static com.example.controlo2.R.layout.activity_tank;
 
 public class TankActivity extends AppCompatActivity implements TankAdapter.onClickAdparter, AddTankDialog.AddTankDialogListener, AddEmailDialog.AddMailDialogListener {
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private CollectionReference tanksReference = db.collection("Tanks");
+    private CollectionReference tanksReference = db.collection(Constants.COLLECTION);
     private TankAdapter tankAdapter;
     private List<ProviderCylinder> providerCylinderList = new ArrayList<>();
 
@@ -89,17 +86,14 @@ public class TankActivity extends AppCompatActivity implements TankAdapter.onCli
     }
 
     private void getMails() {
-        db.collection("Provider").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if (task.isSuccessful()){
-                    for (DocumentSnapshot document : task.getResult()) {
-                        ProviderCylinder providerCylinder = document.toObject(ProviderCylinder.class);
-                        providerCylinderList.add(providerCylinder);
-                    }
+        db.collection(Constants.PROVIDER).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()){
+                for (DocumentSnapshot document : task.getResult()) {
+                    ProviderCylinder providerCylinder = document.toObject(ProviderCylinder.class);
+                    providerCylinderList.add(providerCylinder);
                 }
-
             }
+
         });
     }
 
@@ -119,7 +113,7 @@ public class TankActivity extends AppCompatActivity implements TankAdapter.onCli
 
     @SuppressLint("RestrictedApi")
     private void checkCollection() {
-        db.collection("Tanks").get().addOnCompleteListener(task -> {
+        db.collection(Constants.COLLECTION).get().addOnCompleteListener(task -> {
             floatingActionButton.setVisibility(View.VISIBLE);
             if (task.isSuccessful() && task.getResult().isEmpty()) {
                 constraintLayout_empty.setVisibility(View.VISIBLE);
@@ -151,10 +145,11 @@ public class TankActivity extends AppCompatActivity implements TankAdapter.onCli
     @Override
     public void deleteTank(Tank tankNumber, int position) {
         AlertDialog.Builder alertDialogDelete = new AlertDialog.Builder(this);
-        alertDialogDelete.setTitle("Borrar Cilindro")
+        alertDialogDelete.setTitle(R.string.borrar_cilindro)
                 .setMessage("Desea eliminar el cilindro " + tankNumber.getNumber())
                 .setPositiveButton(R.string.borrar, (dialog, which) -> {
                     tankAdapter.borrarItem(position);
+                    tankAdapter.notifyItemRemoved(position);
                     checkCollection();
                 })
                 .setNegativeButton(R.string.cancelar, (dialog, which) -> {
@@ -193,28 +188,34 @@ public class TankActivity extends AppCompatActivity implements TankAdapter.onCli
     }
 
     @Override
-    public void addTank(int tank) {
-        db.collection("Tanks").whereEqualTo("number", tank)
+    public void addTank(int number, int capacity, String provider, String owner, String date, String observ) {
+        Tank tank = new Tank();
+        tank.setNumber(number);
+        tank.setCapacity(capacity);
+        tank.setProvider(provider);
+        tank.setOwner(owner);
+        tank.setDueDate(date);
+        tank.setObservations(observ);
+        tank.setOnRecharge(false);
+
+        db.collection(Constants.COLLECTION).whereEqualTo("number", number)
                 .limit(1).get()
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         boolean isEmpty = Objects.requireNonNull(task.getResult()).isEmpty();
                         if (!isEmpty) {
-                            Snackbar.make(coordinator, "El  tanque ya existe", Snackbar.LENGTH_SHORT).show();
+                            Snackbar.make(coordinator, R.string.cilindro_existe, Snackbar.LENGTH_SHORT).show();
                         } else {
-                            db.collection("Tanks").document(String.valueOf(tank))
-                                    .set(new Tank(Integer.parseInt(String.valueOf(tank)), 0))
-                                    .addOnSuccessListener(new OnSuccessListener<Void>() {
-                                        @Override
-                                        public void onSuccess(Void aVoid) {
-                                            Snackbar.make(coordinator, "Tanque agregado", Snackbar.LENGTH_SHORT).show();
-                                            updateConstraints();
-                                            Log.d("TAG", "DocumentSnapshot successfully written!");
-                                        }
+                            db.collection("Tanks").document(String.valueOf(number))
+                                    .set(tank)
+                                    .addOnSuccessListener(aVoid -> {
+                                        Snackbar.make(coordinator, R.string.tanque_agregado, Snackbar.LENGTH_SHORT).show();
+                                        updateConstraints();
+                                        Log.d("TAG", "DocumentSnapshot successfully written!");
                                     })
                                     .addOnFailureListener(e -> {
                                         Log.w("TAG", "Error writing document", e);
-                                        Snackbar.make(coordinator, "Error intente nuevamente", Snackbar.LENGTH_SHORT).show();
+                                        Snackbar.make(coordinator, R.string.error_intente_nuevamente, Snackbar.LENGTH_SHORT).show();
                                     });
                         }
                     }
@@ -241,14 +242,14 @@ public class TankActivity extends AppCompatActivity implements TankAdapter.onCli
 
     @Override
     public void addMail(String mail, String name) {
-        db.collection("Provider").whereEqualTo("mail",mail).limit(1).get().addOnCompleteListener(task -> {
+        db.collection(Constants.PROVIDER).whereEqualTo("mail",mail).limit(1).get().addOnCompleteListener(task -> {
             boolean isEmpty = Objects.requireNonNull(task.getResult()).isEmpty();
             if (!isEmpty){
-                Snackbar.make(coordinator, "La direccion de mail ya existe", Snackbar.LENGTH_SHORT).show();
+                Snackbar.make(coordinator, R.string.mail_existe, Snackbar.LENGTH_SHORT).show();
             }
             else {
                 db.collection("Provider").add(new ProviderCylinder(mail, name)).addOnSuccessListener(documentReference ->
-                        Snackbar.make(coordinator,"direccion de email agregado",Snackbar.LENGTH_SHORT).show());
+                        Snackbar.make(coordinator, R.string.email_agregado,Snackbar.LENGTH_SHORT).show());
                 getMails();
             }
         });
@@ -258,10 +259,10 @@ public class TankActivity extends AppCompatActivity implements TankAdapter.onCli
     @Override
     public void onBackPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("Cerrar la aplicacion?")
+        builder.setMessage(R.string.cerrar_app)
                 .setCancelable(false)
-                .setPositiveButton("Si", (dialog, id) -> TankActivity.this.finish())
-                .setNegativeButton("No", (dialog, id) -> dialog.cancel());
+                .setPositiveButton(R.string.si, (dialog, id) -> TankActivity.this.finish())
+                .setNegativeButton(R.string.no, (dialog, id) -> dialog.cancel());
         AlertDialog alert = builder.create();
         alert.show();
 
