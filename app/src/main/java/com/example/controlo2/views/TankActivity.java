@@ -14,7 +14,6 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -28,6 +27,7 @@ import com.example.controlo2.model.Constants;
 import com.example.controlo2.model.ProviderCylinder;
 import com.example.controlo2.model.Tank;
 import com.firebase.ui.firestore.FirestoreRecyclerOptions;
+import com.google.android.material.appbar.CollapsingToolbarLayout;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.firestore.CollectionReference;
@@ -51,14 +51,13 @@ public class TankActivity extends AppCompatActivity implements TankAdapter.onCli
     private TankAdapter tankAdapter;
     private List<ProviderCylinder> providerCylinderList = new ArrayList<>();
 
+
     @BindView(R.id.coordinatorlayout)
     CoordinatorLayout coordinator;
     @BindView(R.id.constraint_empty)
     ConstraintLayout constraintLayout_empty;
-    @BindView(R.id.constraint_ok)
-    ConstraintLayout constraintLayout_ok;
-    @BindView(R.id.toolbarTank)
-    Toolbar toolbar;
+    @BindView(R.id.collapsingToolbar)
+    CollapsingToolbarLayout collapsingToolbarLayout;
     @BindView(R.id.recyclerview_tanks)
     RecyclerView recyclerView;
     @BindView(R.id.progressBar)
@@ -77,12 +76,17 @@ public class TankActivity extends AppCompatActivity implements TankAdapter.onCli
 
         ButterKnife.bind(this);
 
-        setSupportActionBar(toolbar);
         runOnUiThread(this::checkCollection);
         configRecyclerview();
         getMails();
 
         floatingActionButton.setOnClickListener(view -> openDialog());
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cilynderStock();
     }
 
     private void getMails() {
@@ -102,7 +106,6 @@ public class TankActivity extends AppCompatActivity implements TankAdapter.onCli
         FirestoreRecyclerOptions<Tank> options = new FirestoreRecyclerOptions.Builder<Tank>()
                 .setQuery(query, Tank.class)
                 .build();
-
         tankAdapter = new TankAdapter(options, this);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new GridLayoutManager(this, 2);
@@ -121,13 +124,26 @@ public class TankActivity extends AppCompatActivity implements TankAdapter.onCli
                 lottieAnimationView.playAnimation();
                 textViewEmpty_state.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.INVISIBLE);
-                constraintLayout_ok.setVisibility(View.GONE);
             } else {
                 progressBar.setVisibility(View.GONE);
-                constraintLayout_ok.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.VISIBLE);
                 constraintLayout_empty.setVisibility(View.GONE);
                 lottieAnimationView.pauseAnimation();
                 textViewEmpty_state.setVisibility(View.INVISIBLE);
+            }
+        });
+    }
+
+    public void cilynderStock(){
+        List<Tank> list = new ArrayList<>();
+        db.collection(Constants.COLLECTION).get().addOnCompleteListener(task -> {
+            if (task.isSuccessful()) {
+                for (DocumentSnapshot document : task.getResult()) {
+                    Tank taskItem = document.toObject(Tank.class);
+                    if (!taskItem.isOnRecharge())
+                        list.add(taskItem);
+                }
+                collapsingToolbarLayout.setTitle("Cilindros disponibles " + list.size());
             }
         });
     }
@@ -151,6 +167,7 @@ public class TankActivity extends AppCompatActivity implements TankAdapter.onCli
                     tankAdapter.borrarItem(position);
                     tankAdapter.notifyItemRemoved(position);
                     checkCollection();
+                    cilynderStock();
                 })
                 .setNegativeButton(R.string.cancelar, (dialog, which) -> {
 
@@ -211,6 +228,7 @@ public class TankActivity extends AppCompatActivity implements TankAdapter.onCli
                                     .addOnSuccessListener(aVoid -> {
                                         Snackbar.make(coordinator, R.string.tanque_agregado, Snackbar.LENGTH_SHORT).show();
                                         updateConstraints();
+                                        cilynderStock();
                                         Log.d("TAG", "DocumentSnapshot successfully written!");
                                     })
                                     .addOnFailureListener(e -> {

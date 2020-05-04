@@ -52,7 +52,7 @@ public class ControlTankActivity extends AppCompatActivity implements UpdatePsiD
 
 
     private FirebaseFirestore db = FirebaseFirestore.getInstance();
-    private Long level;
+    private TankActivity tankActivity = new TankActivity();
     private Map<String, Object> recharge = new HashMap<>();
     private int nTank;
     private Tank tankValues = new Tank();
@@ -283,7 +283,6 @@ public class ControlTankActivity extends AppCompatActivity implements UpdatePsiD
                         Snackbar.make(coordinatorLayout, R.string.valores_actualizados, LENGTH_SHORT).show();
                     }
                     getLevel();
-
                 }).addOnFailureListener(e -> Snackbar.make(coordinatorLayout, R.string.ocurrio_error, LENGTH_SHORT).show());
     }
 
@@ -341,7 +340,7 @@ public class ControlTankActivity extends AppCompatActivity implements UpdatePsiD
 
     @Override
     public void updatePsi(int tank) {
-        level = (long) tank;
+        Long level = (long) tank;
         recharge.put("pressure", level);
         recharge.put("number", nTank);
         setLevels();

@@ -35,5 +35,7 @@
     <string name="observaciones">Observaciones</string>
     <string name="sin_observaciones">Sin observaciones</string>
     <string name="editar_observaciones">Editar observaciones</string>
+    <string name="en_recarga">EN RECARGA</string>
+    <string name="disponible">DISPONIBLE</string>
 
 </resources>
